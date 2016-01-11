@@ -1,0 +1,31 @@
+services:
+    oc_platform.Antispam:
+        class: OC\PlatformBundle\Antispam\OCAntispam
+        arguments: [@mailer, 50]
+        tags:
+            -  { name: twig.extension }
+        calls:
+            - [ setLocale, [ %locale% ] ]
+        
+    oc_platform.doctrine.notification:
+        class: OC\PlatformBundle\DoctrineListener\ApplicationNotification
+        arguments: [@mailer]
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+
+    sdz_blog.ckeditor:
+        class: OC\PlatformBundle\Form\Type\CkeditorType
+        tags:
+            - { name: form.type, alias: ckeditor }
+            
+    oc_platform.beta.html:
+        class: OC\PlatformBundle\Beta\BetaHTML
+     
+    oc_platform.beta.listener:
+        class: OC\PlatformBundle\Beta\BetaListener
+        arguments: [@oc_platform.beta.html, "2016-06-20"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: processBeta }
+#    oc_platform.example:
+#        class: OC\PlatformBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
